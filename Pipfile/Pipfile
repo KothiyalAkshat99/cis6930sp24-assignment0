@@ -4,8 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-PyMuPDF = "*"
-assignment0 = {file = ".", editable = true}
+pymupdf = "*"
 
 [dev-packages]
 
