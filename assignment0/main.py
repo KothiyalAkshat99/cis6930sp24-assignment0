@@ -39,12 +39,15 @@ def extractincidents(incident_data):
             text.pop()
         
         for t in text: # Splitting text list into required columns
-            #print(type(t), end='\n')
+            
             temp = t[4].split('\n')
             temp.remove('')
-            if(len(temp)<5):
+            if(len(temp)<5): # Handling Blank Spaces for 'Nature' column
                 temp.insert(2, ' ')
                 temp.insert(3, ' ')
+            elif(len(temp)>5): # Handling Multi-line 'Location' issues
+                temp[2] = temp[2] + temp[3]
+                temp.pop(3)
             ls.append(temp)
 
         dttime.append([sublist[0] for sublist in ls])
@@ -83,28 +86,20 @@ def extractincidents(incident_data):
 
     incidents = [dttime, inc_no, loc, nature, inc_ori]
     return incidents
-    
+
 
 def createdb():
 
     con = sqlite3.connect("resources/normanpd.db") # Creating Database connection
     cur = con.cursor() # Database Cursor
 
-    #cur.execute("DROP TABLE incidents;")
     cur.execute("CREATE TABLE incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
-    #res = cur.execute("SELECT name FROM sqlite_master;")
-    #print(res.fetchone())
-
-    #cur.execute("INSERT INTO incidents VALUES ('12/1/2023 23:36', '2023-00081308', '901 12TH AVE NE', 'Suspicious', 'OK0140200');")
-    #con.commit()
-    #res = cur.execute("SELECT * FROM incidents;")
-    #print(res.fetchall())
+    
     return con
 
 
 def populatedb(db, incidents):
 
-    #db = sqlite3.connect("normanpd.db")
     cur = db.cursor()
 
     dttime = incidents[0]
@@ -115,21 +110,17 @@ def populatedb(db, incidents):
     temp = []
 
     for i in range(len(dttime)): # Total pages in the PDF
-        #cur.executemany("INSERT INTO incidents VALUES (?, ?, ?, ?, ?)", dttime[i], inc_no[i], loc[i], nature[i], inc_ori[i])
         for j in range(len(dttime[i])): # Entries per page
-            #print (dttime[i][j], end='\n')
-            #cur.execute("INSERT INTO incidents VALUES (?, ?, ?, ?, ?)",)
             temp.append((dttime[i][j], inc_no[i][j], loc[i][j], nature[i][j], inc_ori[i][j]))
-    #print(temp)
+
     cur.executemany("INSERT INTO incidents VALUES (?, ?, ?, ?, ?)", temp)
     db.commit()
-    #res = cur.execute("SELECT * FROM incidents")
-    #print(res.fetchall())
+    
     return db
 
 
 def status(db):
-    #con = sqlite3.connect("normanpd.db")
+
     cur = db.cursor()
     
     res = cur.execute("SELECT nature, COUNT(*) FROM incidents GROUP BY nature ORDER BY COUNT(*) DESC, nature ASC")
@@ -150,8 +141,6 @@ def status(db):
 
 
 def main(url):
-
-    #url='https://www.normanok.gov/sites/default/files/documents/2023-12/2023-12-01_daily_incident_summary.pdf'
 
     #Download data
     incident_data = fetchincidents(url)
