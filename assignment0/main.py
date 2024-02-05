@@ -58,10 +58,10 @@ def extractincidents(incident_data):
 
 def createdb():
 
-    con = sqlite3.connect("normanpd.db") # Creating Database connection
+    con = sqlite3.connect("resources/normanpd.db") # Creating Database connection
     cur = con.cursor() # Database Cursor
 
-    cur.execute("DROP TABLE incidents;")
+    #cur.execute("DROP TABLE incidents;")
     cur.execute("CREATE TABLE incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
     #res = cur.execute("SELECT name FROM sqlite_master;")
     #print(res.fetchone())
