@@ -12,11 +12,11 @@ pipenv install PyMuPDF
 
 ## How to run
 pipenv run python assignment0/main.py --incidents https://www.normanok.gov/sites/default/files/documents/2024-01/2024-01-07_daily_incident_summary.pdf
-![video](video)
-<video width="640" height="360" controls>
-  <source src="resources/cis6930sp24-assignment0_execution.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+https://github.com/KothiyalAkshat99/cis6930sp24-assignment0/assets/143772575/8c37915a-df20-4831-afd1-c1d0a994b3da
+
+
+
 
 ## Functions
 #### main.py \ - main function to call all other functions 
