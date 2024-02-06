@@ -1,9 +1,10 @@
 # cis6930sp24-assignment0
 
-Name:Akshat Kothiyal
+Name: Akshat Kothiyal
+UFID: 53292487
 
 # Assignment Description (in your own words)
-This assignment is aimed towards successful data extraction from an online source in the form of a pdf and then reformatting the data according to needs.
+This assignment is aimed towards successful data extraction from an online source in the form of a pdf, and data reformatting and database insertion according to needs.
 We're using Python, SQL for program code and database purposes.
 
 
@@ -17,9 +18,9 @@ https://github.com/KothiyalAkshat99/cis6930sp24-assignment0/assets/143772575/8c3
 
 
 
-
 ## Functions
-#### main.py \ - main function to call all other functions 
+#### main.py \ - 
+Main function to call all other functions 
 
 #### fetchincidents(url) - 
 This function takes the pdf URL which has been provided through Command line arguments to fetch pdf data from the URL and returns this it back to main() in the form of an in-memory binary stream, instead of writing the file to disk locally.
@@ -27,7 +28,7 @@ This function takes the pdf URL which has been provided through Command line arg
 #### extractincidents(incident_data) - 
 This function takes the data returned from the fetchincidents() function and extracts raw text from this in-memory binary stream, and changes it into a format that is ready to be inserted into the database. For our use case, it also removes extraneous info which is not required from pdf pages and also handles some edge cases. This data which is extracted is split into - datetime, incident number, location, nature, incident ori. This function returns a single list 'incidents' which comprises of 5 sublists which are mentioned in previous line.
 
-#### createdb() = 
+#### createdb() -
 This function creates a new database and establishes a connection, and creates a new table 'incidents' in this database. The function returns the connection object created.
 
 #### populatedb(db, incidents) - 
