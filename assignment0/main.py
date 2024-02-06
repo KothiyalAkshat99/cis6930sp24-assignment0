@@ -7,14 +7,16 @@ import argparse
 def fetchincidents(url):
     #headers = {}
     #headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
+
     response = urlopen(url).read()
     response = io.BytesIO(response) # In-Memory Binary Stream, can be read like a file
+
     return response
 
 
 def extractincidents(incident_data):
 
-    doc = fitz.open(stream = incident_data, filetype="pdf")
+    doc = fitz.open(stream = incident_data, filetype="pdf") # Using PyMuPDF/ Fitz module for PDF data extraction
 
     global dttime, inc_no, loc, nature, inc_ori
     dttime = []
@@ -29,7 +31,7 @@ def extractincidents(incident_data):
         ls = []
         
         x = doc[page_number]
-        text = x.get_text("blocks") #"text" alternate, keepspaces = True
+        text = x.get_text("blocks")
 
         if page_number == 0: # Removing extraneous info from first page
             text.pop(0)
@@ -55,34 +57,6 @@ def extractincidents(incident_data):
         loc.append([sublist[2] for sublist in ls])
         nature.append([sublist[3] for sublist in ls])
         inc_ori.append([sublist[4] for sublist in ls])
-        #print(loc)
-        '''
-        if page_number == 0: # Replacing/ Removing Extraneous Info from PDF text extract
-            text = text.replace('Date / Time', '')
-            text = text.replace('Incident Number', '')
-            text = text.replace('Location', '')
-            text = text.replace('Nature', '')
-            text = text.replace('Incident ORI', '')
-            text = text.replace('NORMAN POLICE DEPARTMENT', '')
-            text = text.replace('Daily Incident Summary (Public)', '')
-    
-        text = text.strip() # Trimming extra spaces
-        print(text)
-        tsplit = text.split('\n') # Splitting text into rows
-
-        #page_number = 22
-        if page_number == len(doc)-1: # Removing extraneous info from last page of PDF
-            tsplit.pop(len(tsplit)-1)
-        #for t in tsplit:
-            #print(t, end='\n')
-        #print(type(tsplit))
-        dttime.append(tsplit[0::5]) # Splicing for date and time
-        inc_no.append(tsplit[1::5]) # Splicing for incident number
-        loc.append(tsplit[2::5]) # Splicing for location
-        nature.append(tsplit[3::5]) # Splicing for nature
-        inc_ori.append(tsplit[4::5]) # Splicing for incident ORI
-        #print(dttime)
-        '''
 
     incidents = [dttime, inc_no, loc, nature, inc_ori]
     return incidents
@@ -92,7 +66,8 @@ def createdb():
 
     con = sqlite3.connect("resources/normanpd.db") # Creating Database connection
     cur = con.cursor() # Database Cursor
-
+    
+    #Creating incident table
     cur.execute("CREATE TABLE incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
     
     return con
@@ -109,12 +84,14 @@ def populatedb(db, incidents):
     inc_ori = incidents[4]
     temp = []
 
+    # Splitting and re-arranging data into tuple format for easy insertion using executemany
     for i in range(len(dttime)): # Total pages in the PDF
         for j in range(len(dttime[i])): # Entries per page
             temp.append((dttime[i][j], inc_no[i][j], loc[i][j], nature[i][j], inc_ori[i][j]))
-
+    
+    # Data insertion
     cur.executemany("INSERT INTO incidents VALUES (?, ?, ?, ?, ?)", temp)
-    db.commit()
+    db.commit() # Committing to save changes to DB
     
     return db
 
@@ -123,38 +100,39 @@ def status(db):
 
     cur = db.cursor()
     
+    # Pulling 'nature' type and frequency from DB
     res = cur.execute("SELECT nature, COUNT(*) FROM incidents GROUP BY nature ORDER BY COUNT(*) DESC, nature ASC")
     
     global bl
     bl = []
 
     for t in res.fetchall():
-        if t[0]==' ':
+        if t[0]==' ': # Handling blank nature case
             bl.append(t[1])
             continue
         print(f'{t[0]} | {t[1]}', end='\n')
     
-    for t in bl:
+    for t in bl: # Printing blank nature case
         print(f'  | {t}', end='\n')
     
-    db.close()
+    db.close() # Closing DB connection
 
 
 def main(url):
 
-    #Download data
+    #Downloading data
     incident_data = fetchincidents(url)
 
-    # Extract data
+    # Extracting data
     incidents = extractincidents(incident_data)
 	
-    # Create new database
+    # Creating new database
     db = createdb()
 	
-    # Insert data
+    # Inserting data
     db = populatedb(db, incidents)
 	
-    # Print incident counts
+    # Printing incident 'nature' frequencies
     status(db)
 
 
