@@ -1,6 +1,6 @@
 # cis6930sp24-assignment0
 
-Name: Akshat Kothiyal
+Name: Akshat Kothiyal <br>
 UFID: 53292487
 
 # Assignment Description
@@ -94,3 +94,13 @@ Tests if there are any issues when status(db) pulls data from the database and w
 
 ### Test Results and Observations - 
 All tests ran successfully.
+
+
+
+## Linux Environment Test (Google Cloud VM)
+
+### Tested main.py, pytest on Python 3.11
+
+![DE_Assignment0_Linux_1](https://github.com/KothiyalAkshat99/cis6930sp24-assignment0/assets/143772575/b66c243e-e5b8-4ea9-a8d7-08eee21b2b97)
+
+![DE_Assignment0_Linux_2](https://github.com/KothiyalAkshat99/cis6930sp24-assignment0/assets/143772575/219c2644-5b5f-4a34-95c6-6f986cac5ba0)
