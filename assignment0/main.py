@@ -68,7 +68,7 @@ def createdb():
     cur = con.cursor() # Database Cursor
     
     #Creating incident table
-    cur.execute("CREATE TABLE incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
+    cur.execute("CREATE TABLE IF NOT EXISTS incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
     
     return con
 
