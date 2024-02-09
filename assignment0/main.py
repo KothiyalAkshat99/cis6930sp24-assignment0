@@ -68,7 +68,8 @@ def createdb():
     cur = con.cursor() # Database Cursor
     
     #Creating incident table
-    cur.execute("CREATE TABLE IF NOT EXISTS incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
+    cur.execute("DROP TABLE IF EXISTS incidents;")
+    cur.execute("CREATE TABLE incidents (incident_time TEXT, incident_number TEXT, incident_location TEXT, nature TEXT, incident_ori TEXT);")
     
     return con
 
@@ -107,13 +108,13 @@ def status(db):
     bl = []
 
     for t in res.fetchall():
-        if t[0]==' ': # Handling blank nature case
-            bl.append(t[1])
-            continue
+        #if t[0]==' ': # Handling blank nature case
+            #bl.append(t[1])
+            #continue
         print(f'{t[0]} | {t[1]}', end='\n')
     
-    for t in bl: # Printing blank nature case
-        print(f'  | {t}', end='\n')
+    #for t in bl: # Printing blank nature case
+        #print(f'  | {t}', end='\n')
     
     db.close() # Closing DB connection
 
